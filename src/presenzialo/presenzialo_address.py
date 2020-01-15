@@ -4,20 +4,22 @@ import json
 from .presenzialo_web import PRweb
 from .presenzialo_auth import PRauth
 from .presenzialo_config import generate_workersid_file, config_workersid
+from .presenzialo_ids import PRworker
 
 from collections import namedtuple, OrderedDict
 
-WorkerID = namedtuple("WorkerID", "surname name total id")
 Worker = namedtuple("Worker", "name id status phone phone2")
 
 
 class PRaddress:
-    def __init__(self, pr_web):
+    def __init__(self, pr_web, raw=False):
 
         self.pr_web = pr_web
         self.pr_ids = PRworker(pr_web)
 
         self.workers = OrderedDict()
+
+        self.raw = raw
 
     def present(self, name):
         if isinstance(name, str):
@@ -38,7 +40,8 @@ class PRaddress:
         return self.workers
 
     def parse(self, json):
-        print(json)
+        if self.raw:
+            print(json)
         d = OrderedDict()
         for i in json:
             w = Worker(
@@ -61,87 +64,19 @@ class PRaddress:
         )
 
 
-class PRworker:
-    def __init__(self, pr_web):
-
-        self.pr_web = pr_web
-
-        if generate_workersid_file():
-            data = self.download()
-            self.write(data)
-        else:
-            data = self.read()
-
-        self.workers, self.num_workers = self.parse(data)
-
-    def download(self):
-        return self.pr_web.workers_id()
-
-    def write(self, js):
-        with open(config_workersid, "w") as fp:
-            json.dump(js, fp, sort_keys=True, indent=4)
-
-    def read(self):
-        with open(config_workersid, "r") as fp:
-            data = json.load(fp)
-        return data
-
-    def parse(self, json):
-        d = OrderedDict()
-        for i in json["results"]:
-            d[i["iddip"]] = WorkerID(
-                i["cognome"],
-                i["nome"],
-                "{} {}".format(i["nome"], i["cognome"]),
-                i["iddip"],
-            )
-        return d, json["total"]
-
-    def __str__(self):
-        return "\n".join(
-            "{:5d} {} {}".format(v.id, v.surname, v.name)
-            for k, v in self.workers.items()
-        )
-
-    def id(self, name):
-        if isinstance(name, str):
-            name = [name]
-        # upper case
-        name = [n.upper() for n in name]
-        l = []
-        for n in name:
-            for k, v in self.workers.items():
-                if n in v.total:
-                    l.append(v.id)
-        return l
-
-    def worker(self, id):
-        w = self.workers[id]
-        return "{} {}".format(w.surname, w.name)
-
-    def total(self):
-        return self.num_workers
-
-
 def add_parser(parser):
 
     parser_group = parser.add_argument_group("Worker options")
 
     parser_group.add_argument(
-        "--id",
-        dest="worker_for_id",
-        metavar="worker",
-        default=None,
-        help="Worker's id",
-    )
-
-    parser_group.add_argument(
         "--in",
         dest="workers_for_in",
         metavar="worker",
-        default=None,
+        nargs="+",
         help="Worker's presence",
     )
+
+    parser_group.add_argument("--raw", action="store_true", help="raw data")
 
 
 def main():
@@ -158,17 +93,9 @@ def main():
 
     pr_web = PRweb(PRauth(**vars(args)))
 
-    if args.worker_for_id:
-        pr_ids = PRworker(pr_web)
-        ids = pr_ids.id(args.worker_for_id)
-        print("\n".join(["{} {}".format(i, pr_ids.worker(i)) for i in ids]))
-
     if args.workers_for_in:
-        pr_ins = PRaddress(pr_web)
+        pr_ins = PRaddress(pr_web, args.raw)
         ins = pr_ins.present(args.workers_for_in)
-
-        # ids = pr_ids.id(args.workers_for_in)
-        # print("\n".join(["{} {}".format(i, pr_ids.worker(i)) for i in ids]))
 
 
 if __name__ == "__main__":
