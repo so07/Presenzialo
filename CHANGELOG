@@ -1,0 +1,12 @@
+# 0.1.2
+
+- change name from Presenzialo to presenzialo
+- add presenziamelo entry point in setup file
+
+# 0.1.1
+
+- fix logs module import
+
+# 0.1.0
+
+- 1st working version
