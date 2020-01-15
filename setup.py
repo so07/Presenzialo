@@ -12,6 +12,7 @@ setup(
     url="https://github.com/so07/presenzialo",
     download_url="",
     requires=["requests"],
+    install_requires=["requests"],
     packages=find_packages(where="src"),
     package_dir={"": "src"},
     entry_points={
