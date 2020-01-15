@@ -150,10 +150,10 @@ class PRweb:
 
         return r.json()
 
-    def address_book(self):
+    def address_book(self, iddip=-1):
 
-        url = "{}/rpc/Rubrica.aspx?PageMethod=LeggiRubrica&iddip=-1&data={}&_=1578658512666".format(
-            self.url, datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+        url = "{}/rpc/Rubrica.aspx?PageMethod=LeggiRubrica&iddip={}&data={}&_=1578658512666".format(
+            self.url, iddip, datetime.datetime.now().strftime("%Y%m%d%H%M%S")
         )
 
         r = self.session.post(
