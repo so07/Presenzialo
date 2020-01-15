@@ -67,8 +67,8 @@ def add_parser_worker(parser):
 def main():
 
     parser = argparse.ArgumentParser(
-        prog="Presenzialo",
-        description="Presenzialo",
+        prog="presenzialo",
+        description="presenzialo",
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
 
