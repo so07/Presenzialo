@@ -2,8 +2,8 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="Presenzialo",
-    version="0.1.1",
+    name="presenzialo",
+    version="0.1.2",
     description="presence web manager",
     long_description="presence web manager",
     author="so07",
