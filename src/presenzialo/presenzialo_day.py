@@ -1,4 +1,4 @@
-from logs.daylog import DayLog
+from .logs.daylog import DayLog
 
 from .presenzialo_utils import convert2time, convert2date
 import datetime
