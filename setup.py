@@ -9,7 +9,7 @@ setup(
     author="so07",
     author_email="",
     maintainer="so07",
-    url="https://github.com/so07/Presenzialo",
+    url="https://github.com/so07/presenzialo",
     download_url="",
     requires=["requests"],
     packages=find_packages(where="src"),
