@@ -3,6 +3,8 @@ import json
 import requests
 import datetime
 
+max_workers = 1000
+
 
 class PRweb:
     def __init__(self, auth):
@@ -135,6 +137,16 @@ class PRweb:
             headers=self.headers,
             data=json.dumps(payload),
         )
+
+        return r.json()
+
+    def workers_id(self):
+
+        url = "{}/rpc/Rubrica.aspx?pageMethod=ElencoSottopostiSelectVisibilt%C3%A0Estesa&pattern=&page=1&pageLimit={}".format(
+            self.url, max_workers
+        )
+
+        r = self.session.get(url, cookies=self.cookies, headers=self.headers)
 
         return r.json()
 
