@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="presenzialo",
-    version="0.1.2",
+    version="0.2.0",
     description="presence web manager",
     long_description="presence web manager",
     author="so07",
@@ -19,6 +19,8 @@ setup(
         "console_scripts": [
             "presenzialo=presenzialo.presenzialo:main",
             "presenziamelo=presenzialo.presenzialo:main",
+            "PRid=presenzialo.presenzialo_id:main",
+            "PRaddress=presenzialo.presenzialo_address:main",
         ],
     },
     classifiers=[
