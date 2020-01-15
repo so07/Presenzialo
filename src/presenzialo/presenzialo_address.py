@@ -4,7 +4,7 @@ import json
 from .presenzialo_web import PRweb
 from .presenzialo_auth import PRauth
 from .presenzialo_config import generate_workersid_file, config_workersid
-from .presenzialo_ids import PRworker
+from .presenzialo_id import PRworker
 
 from collections import namedtuple, OrderedDict
 

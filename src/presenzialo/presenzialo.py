@@ -3,6 +3,7 @@ import argparse
 
 from .presenzialo_web import PRweb
 from .presenzialo_day import PRday
+from .presenzialo_address import PRaddress
 from . import presenzialo_auth as PRauth
 
 
@@ -12,7 +13,8 @@ def presenzialo(args):
     pr_web = PRweb(pr_auth)
 
     if args.worker is not None:
-        address = pr_web.address_book()
+        address = PRaddress(pr_web)
+        address.present(args.worker)
     else:
         pr_day = PRday(pr_web.timecard(args.day_from, args.day_to))
         for d in pr_day.days:
