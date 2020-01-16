@@ -13,9 +13,12 @@ def presenzialo(args):
     pr_auth = PRauth(**vars(args))
     pr_web = PRweb(pr_auth)
 
-    if args.workers is not None:
-        address = PRaddress(pr_web)
-        address.present(args.workers)
+    if args.workers is not None or args.phones is not None or args.cache_address:
+        address = PRaddress(pr_web, args.cache_address, args.raw)
+        if args.workers:
+            address.present(args.workers)
+        if args.phones:
+            address.phone(args.phones)
     else:
         pr_day = PRday(pr_web.timecard(args.day_from, args.day_to))
         for d in pr_day.days:

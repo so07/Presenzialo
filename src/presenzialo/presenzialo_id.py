@@ -1,10 +1,11 @@
-import argparse
 import json
+import argparse
 
 from .presenzialo_web import PRweb
 from .presenzialo_auth import PRauth
 from .presenzialo_config import generate_workersid_file, config_workersid
 from .presenzialo_args import add_parser_debug
+from .presenzialo_utils import write_data, read_data
 
 from collections import namedtuple, OrderedDict
 
@@ -19,23 +20,14 @@ class PRworker:
 
         if generate_workersid_file():
             data = self.download()
-            self.write(data)
+            write_data(data, config_workersid)
         else:
-            data = self.read()
+            data = read_data(config_workersid)
 
         self.workers, self.num_workers = self.parse(data)
 
     def download(self):
         return self.pr_web.workers_id()
-
-    def write(self, js):
-        with open(config_workersid, "w") as fp:
-            json.dump(js, fp, sort_keys=True, indent=4)
-
-    def read(self):
-        with open(config_workersid, "r") as fp:
-            data = json.load(fp)
-        return data
 
     def parse(self, json):
         d = OrderedDict()
@@ -78,7 +70,7 @@ class PRworker:
 
 def add_parser(parser):
 
-    parser_group = parser.add_argument_group("Worker options")
+    parser_group = parser.add_argument_group("worker options")
 
     parser_group.add_argument(
         "--id",

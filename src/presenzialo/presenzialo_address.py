@@ -1,11 +1,13 @@
-import argparse
+import os
 import json
+import argparse
 
 from .presenzialo_web import PRweb
 from .presenzialo_auth import PRauth
-from .presenzialo_config import generate_workersid_file, config_workersid
+from .presenzialo_config import config_address
 from .presenzialo_id import PRworker
 from .presenzialo_args import add_parser_debug
+from .presenzialo_utils import write_data, read_data
 
 from collections import namedtuple, OrderedDict
 
@@ -13,7 +15,7 @@ Worker = namedtuple("Worker", "name id status phone phone2")
 
 
 class PRaddress:
-    def __init__(self, pr_web, raw=False):
+    def __init__(self, pr_web, cache=False, raw=False):
 
         self.pr_web = pr_web
         self.pr_ids = PRworker(pr_web)
@@ -21,6 +23,16 @@ class PRaddress:
         self.workers = OrderedDict()
 
         self.raw = raw
+
+        self.cache = cache
+
+        if self.cache:
+            data = self.download()
+            write_data(data, config_address)
+        else:
+            if os.path.isfile(config_address):
+                self.json_address_phone = read_data(config_address)
+                self.address_phone = self.parse(self.json_address_phone)
 
     def present(self, name):
         if isinstance(name, str):
@@ -51,6 +63,9 @@ class PRaddress:
             d[w.id] = w
         return d
 
+    def download(self):
+        return self.pr_web.address_book()
+
     def __str__(self):
         s = ""
         for i, (k, v) in enumerate(self.workers.items()):
@@ -64,6 +79,13 @@ class PRaddress:
             ["{} {}".format(v.name, v.status) for k, v in self.workers.items()]
         )
 
+    def phone(self, phones):
+        for p in phones:
+            for k, v in self.address_phone.items():
+                if p in v.phone or p in v.phone2:
+                    self.workers[k] = v
+        print(self)
+
 
 def add_parser_address(parser):
 
@@ -71,6 +93,19 @@ def add_parser_address(parser):
 
     parser_group.add_argument(
         "--in", dest="workers", metavar="worker", nargs="+", help="Worker's presence",
+    )
+
+    parser_group.add_argument(
+        "-p",
+        "--phone",
+        dest="phones",
+        metavar="phone",
+        nargs="+",
+        help="Worker's phone number",
+    )
+
+    parser_group.add_argument(
+        "--cache-address", action="store_true", help="save address phone for future use"
     )
 
 
