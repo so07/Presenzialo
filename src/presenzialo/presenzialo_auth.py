@@ -119,7 +119,7 @@ class PRauth(dict):
             os.remove(self["config_file"])
 
 
-def add_parser(parser):
+def add_parser_auth(parser):
 
     authparser = parser.add_argument_group("authentication options")
 
@@ -172,7 +172,7 @@ def main():
         description="Module to authenticate",
         formatter_class=argparse.RawTextHelpFormatter,
     )
-    add_parser(parser)
+    add_parser_auth(parser)
 
     args = parser.parse_args()
 

@@ -2,68 +2,24 @@ import datetime
 import argparse
 
 from .presenzialo_web import PRweb
-from .presenzialo_day import PRday
-from .presenzialo_address import PRaddress
-from . import presenzialo_auth as PRauth
+from .presenzialo_day import PRday, add_parser_date
+from .presenzialo_args import add_parser_debug
+from .presenzialo_address import PRaddress, add_parser_address
+from .presenzialo_auth import PRauth, add_parser_auth
 
 
 def presenzialo(args):
 
-    pr_auth = PRauth.PRauth(**vars(args))
+    pr_auth = PRauth(**vars(args))
     pr_web = PRweb(pr_auth)
 
-    if args.worker is not None:
+    if args.workers is not None:
         address = PRaddress(pr_web)
-        address.present(args.worker)
+        address.present(args.workers)
     else:
         pr_day = PRday(pr_web.timecard(args.day_from, args.day_to))
         for d in pr_day.days:
             print(d)
-
-
-def add_parser_date(parser):
-
-    date_parser = parser.add_argument_group("Date options")
-
-    def _date(s):
-        for fmt in ["%Y-%m-%d", "%Y%m%d", "%d-%m-%Y", "%d/%m/%Y"]:
-            try:
-                return datetime.datetime.strptime(s, fmt).date()
-            except:
-                pass
-        raise ValueError("invalid date {}".format(s))
-
-    date_parser.add_argument(
-        "--from",
-        dest="day_from",
-        type=_date,
-        default=datetime.date.today(),  # default=datetime.datetime(1970, 1, 1),
-        metavar="YYYY-MM-DD",
-        help="from date YYYY-MM-DD",
-    )
-
-    date_parser.add_argument(
-        "--to",
-        dest="day_to",
-        type=_date,
-        default=datetime.date.today(),
-        metavar="YYYY-MM-DD",
-        help="to date YYYY-MM-DD (default %(default)s)",
-    )
-
-
-def add_parser_worker(parser):
-
-    parser_group = parser.add_argument_group("Worker options")
-
-    parser_group.add_argument(
-        "-i",
-        "--in",
-        dest="worker",
-        metavar="worker",
-        default=None,
-        help="Worker's presence",
-    )
 
 
 def main():
@@ -74,9 +30,10 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
 
+    add_parser_debug(parser)
     add_parser_date(parser)
-    add_parser_worker(parser)
-    PRauth.add_parser(parser)
+    add_parser_address(parser)
+    add_parser_auth(parser)
 
     args = parser.parse_args()
 

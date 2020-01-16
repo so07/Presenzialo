@@ -5,6 +5,7 @@ from .presenzialo_web import PRweb
 from .presenzialo_auth import PRauth
 from .presenzialo_config import generate_workersid_file, config_workersid
 from .presenzialo_id import PRworker
+from .presenzialo_args import add_parser_debug
 
 from collections import namedtuple, OrderedDict
 
@@ -64,19 +65,13 @@ class PRaddress:
         )
 
 
-def add_parser(parser):
+def add_parser_address(parser):
 
-    parser_group = parser.add_argument_group("Worker options")
+    parser_group = parser.add_argument_group("worker options")
 
     parser_group.add_argument(
-        "--in",
-        dest="workers_for_in",
-        metavar="worker",
-        nargs="+",
-        help="Worker's presence",
+        "--in", dest="workers", metavar="worker", nargs="+", help="Worker's presence",
     )
-
-    parser_group.add_argument("--raw", action="store_true", help="raw data")
 
 
 def main():
@@ -87,15 +82,16 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
 
-    add_parser(parser)
+    add_parser_address(parser)
+    add_parser_debug(parser)
 
     args = parser.parse_args()
 
     pr_web = PRweb(PRauth(**vars(args)))
 
-    if args.workers_for_in:
+    if args.workers:
         pr_ins = PRaddress(pr_web, args.raw)
-        ins = pr_ins.present(args.workers_for_in)
+        ins = pr_ins.present(args.workers)
 
 
 if __name__ == "__main__":

@@ -9,7 +9,6 @@ max_workers = 1000
 class PRweb:
     def __init__(self, auth):
         self.auth = auth
-
         self.url = auth["host"]
         self.idworker, self.session, self.cookies, self.headers = self.login(auth)
 
