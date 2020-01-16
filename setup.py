@@ -19,6 +19,7 @@ setup(
         "console_scripts": [
             "presenzialo=presenzialo.presenzialo:main",
             "presenziamelo=presenzialo.presenzialo:main",
+            "PRday=presenzialo.presenzialo_day:main",
             "PRid=presenzialo.presenzialo_id:main",
             "PRaddress=presenzialo.presenzialo_address:main",
         ],
