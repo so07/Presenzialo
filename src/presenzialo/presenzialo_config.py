@@ -1,7 +1,7 @@
 import os
 import datetime
 
-version = "0.3.1"
+version = "0.3.2"
 
 config_path = os.path.join(os.path.expanduser("~"), ".presenzialo")
 
