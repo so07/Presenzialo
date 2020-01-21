@@ -1,7 +1,14 @@
 import os
 import datetime
 
-config_path = os.path.join(os.path.expanduser("~"), ".Presenzialo")
+version = "0.3.0"
+
+config_path = os.path.join(os.path.expanduser("~"), ".presenzialo")
+
+config_path_deprecated = os.path.join(os.path.expanduser("~"), ".Presenzialo")
+if os.path.isdir(config_path_deprecated):
+    import shutil
+    shutil.move(config_path_deprecated, config_path)
 
 if not os.path.exists(config_path):
     os.makedirs(config_path)
