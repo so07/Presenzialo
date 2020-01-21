@@ -11,7 +11,16 @@ from .presenzialo_utils import write_data, read_data
 
 from collections import namedtuple, OrderedDict
 
-Worker = namedtuple("Worker", "name id status phone phone2")
+Day = namedtuple("Day", "smart_working mission other")
+
+Day.__new__.__defaults__ = (None,) * len(Day._fields)
+
+
+Worker = namedtuple(
+    "Worker", "name id status phone phone2 office group boss today tomorrow"
+)
+
+Worker.__new__.__defaults__ = (None,) * len(Worker._fields)
 
 
 class PRaddress:
@@ -54,14 +63,34 @@ class PRaddress:
         return self.workers
 
     def parse(self, json):
+
         if self.raw:
             print(json)
+
         d = OrderedDict()
+
         for i in json:
+
+            day = {}
+            for k in ["oggi", "domani"]:
+                if i[k]:
+                    day[k] = Day(i[k]["telelavoro"], i[k]["misstrasf"], i[k]["altro"])
+
             w = Worker(
-                i["nominativo"].strip(), i["id"], i["descrstato"].strip(), i["telefono"].strip(), i["libero"].strip()
+                i["nominativo"].strip(),
+                i["id"],
+                i["descrstato"].strip(),
+                i["telefono"].strip(),
+                i["libero"].strip(),
+                i["altro"],
+                i["centrocontr"],
+                i["responsabile"],
+                day.get("oggi", None),
+                day.get("domani", None),
             )
+
             d[w.id] = w
+
         return d
 
     def download(self):
@@ -70,11 +99,33 @@ class PRaddress:
     def __str__(self):
         s = ""
         for i, (k, v) in enumerate(self.workers.items()):
-            s += "{}\n{}\n".format(v.name, v.status)
-            s += "{} {}\n".format(v.phone, v.phone2)
-            s += "{}\n".format(v.id)
+            s += "{}\n".format(v.name)
+            s += "  {}\n".format(v.status)
+            s += "  {} {}\n".format(v.phone, v.phone2)
+            if v.group and v.boss:
+                s += "  {} ({})\n".format(v.group, v.boss)
+            if v.office:
+                s += "  {}\n".format(v.office)
+            s += "  {}\n".format(v.id)
+
+            for k in ["today", "tomorrow"]:
+
+                day = getattr(v, k)
+
+                if day:
+
+                    if day.smart_working:
+                        s += "  {} SMART_WORKING\n".format(k.upper())
+
+                    if day.mission:
+                        s += "  {} MISSION\n".format(k.upper())
+
+                    if day.other:
+                        s += "  {} OTHER\n".format(k.upper())
+
             if i != len(self.workers) - 1:
                 s += "\n"
+
         return s
         return "\n".join(
             ["{} {}".format(v.name, v.status) for k, v in self.workers.items()]

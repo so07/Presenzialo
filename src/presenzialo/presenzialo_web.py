@@ -151,7 +151,7 @@ class PRweb:
 
     def address_book(self, iddip=-1):
 
-        url = "{}/rpc/Rubrica.aspx?PageMethod=LeggiRubrica&iddip={}&data={}&_=1578658512666".format(
+        url = "{}/rpc/Rubrica.aspx?PageMethod=LeggiRubricaDettagli&iddip={}&data={}&_=1578658512666".format(
             self.url, iddip, datetime.datetime.now().strftime("%Y%m%d%H%M%S")
         )
 
