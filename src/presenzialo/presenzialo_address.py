@@ -177,7 +177,7 @@ def main():
     pr_web = PRweb(PRauth(**vars(args)))
 
     if args.workers:
-        pr_ins = PRaddress(pr_web, args.raw)
+        pr_ins = PRaddress(pr_web, args.cache_address, args.raw)
         ins = pr_ins.present(args.workers)
 
 

@@ -116,6 +116,12 @@ class PRweb:
 
         # idworker, session, cookies, headers = PRweb.login()
 
+    def check_json_validity(self, r, msg):
+        try:
+            r.json()
+        except:
+            raise ConnectionError(msg)
+
     def timecard(
         self, day_from=datetime.datetime.today(), day_to=datetime.datetime.today()
     ):
@@ -137,6 +143,8 @@ class PRweb:
             data=json.dumps(payload),
         )
 
+        self.check_json_validity(r, "from timecard")
+
         return r.json()
 
     def workers_id(self):
@@ -147,12 +155,19 @@ class PRweb:
 
         r = self.session.get(url, cookies=self.cookies, headers=self.headers)
 
+        self.check_json_validity(r, "from workers_id")
+
         return r.json()
 
     def address_book(self, iddip=-1):
 
-        url = "{}/rpc/Rubrica.aspx?PageMethod=LeggiRubricaDettagli&iddip={}&data={}&_=1578658512666".format(
-            self.url, iddip, datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+        if iddip == -1:
+            api_name = "LeggiRubrica"
+        else:
+            api_name = "LeggiRubricaDettagli"
+
+        url = "{}/rpc/Rubrica.aspx?PageMethod={}&iddip={}&data={}&_=1578658512666".format(
+            self.url, api_name, iddip, datetime.datetime.now().strftime("%Y%m%d%H%M%S")
         )
 
         r = self.session.post(
@@ -162,5 +177,7 @@ class PRweb:
             headers=self.headers,
             # data=json.dumps(payload)
         )
+
+        self.check_json_validity(r, "from address_book")
 
         return r.json()
