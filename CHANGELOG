@@ -1,3 +1,8 @@
+# 0.3.1
+
+- change configuration file to .presenzialo
+- fix cache address option with phone or presence option
+
 # 0.3.0
 
 - phone number support
