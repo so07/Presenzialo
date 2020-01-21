@@ -27,12 +27,13 @@ class PRaddress:
         self.cache = cache
 
         if self.cache:
-            data = self.download()
-            write_data(data, config_address)
+            self.json_address_phone = self.download()
+            write_data(self.json_address_phone, config_address)
         else:
             if os.path.isfile(config_address):
                 self.json_address_phone = read_data(config_address)
-                self.address_phone = self.parse(self.json_address_phone)
+
+        self.address_phone = self.parse(self.json_address_phone)
 
     def present(self, name):
         if isinstance(name, str):
@@ -58,7 +59,7 @@ class PRaddress:
         d = OrderedDict()
         for i in json:
             w = Worker(
-                i["nominativo"], i["id"], i["descrstato"], i["telefono"], i["libero"]
+                i["nominativo"].strip(), i["id"], i["descrstato"].strip(), i["telefono"].strip(), i["libero"].strip()
             )
             d[w.id] = w
         return d
