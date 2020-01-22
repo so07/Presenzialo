@@ -41,6 +41,8 @@ class PRaddress:
         else:
             if os.path.isfile(config_address):
                 self.json_address_phone = read_data(config_address)
+            else:
+                self.json_address_phone = {}
 
         self.address_phone = self.parse(self.json_address_phone)
 
