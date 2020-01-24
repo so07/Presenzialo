@@ -1,3 +1,7 @@
+# 0.4.1
+
+- fix setup file for double install_requires key
+
 # 0.4.0
 
 - telegram bot
