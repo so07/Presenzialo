@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="presenzialo",
-    version="0.3.5",
+    version="0.4.0",
     description="presence web manager",
     long_description="presence web manager",
     author="so07",
