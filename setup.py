@@ -13,6 +13,7 @@ setup(
     download_url="",
     requires=["requests"],
     install_requires=["requests"],
+    install_requires=["requests", "python-telegram-bot"],
     packages=find_packages(where="src"),
     package_dir={"": "src"},
     entry_points={
@@ -22,6 +23,7 @@ setup(
             "PRday=presenzialo.presenzialo_day:main",
             "PRid=presenzialo.presenzialo_id:main",
             "PRaddress=presenzialo.presenzialo_address:main",
+            "PRbot=presenzialo.presenzialo_bot:main",
         ],
     },
     classifiers=[
