@@ -123,7 +123,7 @@ class PRweb:
             raise ConnectionError(msg)
 
     def timecard(
-        self, day_from=datetime.datetime.today(), day_to=datetime.datetime.today()
+        self, day_from=datetime.date.today(), day_to=datetime.date.today()
     ):
 
         url = "{}/rpc/Cartellino.aspx?PageMethod=DettaglioCartellino&iddip={}".format(
