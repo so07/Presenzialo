@@ -12,7 +12,6 @@ setup(
     url="https://github.com/so07/presenzialo",
     download_url="",
     requires=["requests"],
-    install_requires=["requests"],
     install_requires=["requests", "python-telegram-bot"],
     packages=find_packages(where="src"),
     package_dir={"": "src"},
