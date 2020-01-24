@@ -34,15 +34,18 @@ class PRaddress:
         self.raw = raw
 
         self.cache = cache
+        self.valid_presence = False
 
         if self.cache:
             self.json_address_phone = self.download()
             write_data(self.json_address_phone, config_address)
+            self.valid_presence = True
         else:
             if os.path.isfile(config_address):
                 self.json_address_phone = read_data(config_address)
             else:
-                self.json_address_phone = {}
+                self.json_address_phone = self.download()
+                self.valid_presence = True
 
         self.address_phone = self.parse(self.json_address_phone)
 
@@ -52,6 +55,8 @@ class PRaddress:
         # upper case
         name = [n.upper() for n in name]
 
+        self.valid_presence = True
+
         for n in name:
             for i in self.pr_ids.id(n):
                 js = self.pr_web.address_book(i)
@@ -59,8 +64,6 @@ class PRaddress:
 
                 for k, v in d.items():
                     self.workers[k] = v
-
-        print(self)
 
         return self.workers
 
@@ -102,7 +105,8 @@ class PRaddress:
         s = ""
         for i, (k, v) in enumerate(self.workers.items()):
             s += "{}\n".format(v.name)
-            s += "  {}\n".format(v.status)
+            if self.valid_presence:
+                s += "  {}\n".format(v.status)
             s += "  {} {}\n".format(v.phone, v.phone2)
             if v.group and v.boss:
                 s += "  {} ({})\n".format(v.group, v.boss)
@@ -139,6 +143,7 @@ class PRaddress:
                 if p in v.phone or p in v.phone2:
                     self.workers[k] = v
         print(self)
+        return self
 
 
 def add_parser_address(parser):
@@ -178,9 +183,13 @@ def main():
 
     pr_web = PRweb(PRauth(**vars(args)))
 
+    pr_ins = PRaddress(pr_web, args.cache_address, args.raw)
+
     if args.workers:
-        pr_ins = PRaddress(pr_web, args.cache_address, args.raw)
         ins = pr_ins.present(args.workers)
+
+    if args.phones:
+        ins = pr_ins.phone(args.phones)
 
 
 if __name__ == "__main__":
