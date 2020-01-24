@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="presenzialo",
-    version="0.4.0",
+    version="0.4.1",
     description="presence web manager",
     long_description="presence web manager",
     author="so07",
@@ -12,7 +12,6 @@ setup(
     url="https://github.com/so07/presenzialo",
     download_url="",
     requires=["requests"],
-    install_requires=["requests"],
     install_requires=["requests", "python-telegram-bot"],
     packages=find_packages(where="src"),
     package_dir={"": "src"},
