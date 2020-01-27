@@ -65,6 +65,7 @@ class PRaddress:
                 for k, v in d.items():
                     self.workers[k] = v
 
+        # print(self)
         return self.workers
 
     def parse(self, json):
@@ -142,7 +143,7 @@ class PRaddress:
             for k, v in self.address_phone.items():
                 if p in v.phone or p in v.phone2:
                     self.workers[k] = v
-        print(self)
+        # print(self)
         return self
 
 

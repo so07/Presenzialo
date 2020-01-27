@@ -17,8 +17,10 @@ def presenzialo(args):
         address = PRaddress(pr_web, args.cache_address, args.raw)
         if args.workers:
             address.present(args.workers)
+            print(address)
         if args.phones:
             address.phone(args.phones)
+            print(address)
     else:
         pr_day = PRday(pr_web.timecard(args.day_from, args.day_to))
         for d in pr_day.days:
