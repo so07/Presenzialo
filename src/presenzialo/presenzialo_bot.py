@@ -1,8 +1,15 @@
 import os
 import re
 import sys
+import datetime
 import configparser
 from threading import Thread
+
+import logging
+
+logging.basicConfig(
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
+)
 
 from telegram import (
     Bot,
@@ -33,13 +40,14 @@ def get_token(config_file):
 
 token = get_token(config_auth)
 
-print("found token", token)
+logging.info("found token %s", token)
 
 bot = Bot(token=token)
 updater = Updater(token=token)
 
 
 def get_prweb():
+    logging.info("getting PRweb")
     return PRweb(PRauth())
 
 
@@ -81,19 +89,28 @@ def bot_print(bot, update, msg):
 
 def call_prlo(func):
     def wrapped(bot, update, *args, **kwargs):
+        logging.info("calling %s", func.__name__)
         ret = func(bot, update, *args, **kwargs)
         bot_wakeup(bot, update)
+        logging.info("well done %s", func.__name__)
         return ret
 
     return wrapped
+
+
+def get_today():
+    today = datetime.date.today()
+    logging.info("day arg %s", today)
+    pr_day = PRday(get_prweb().timecard(today, today))
+    day = pr_day.days[0]
+    return day
 
 
 @call_prlo
 def time(bot, update):
     """bot command for uptime"""
     bot.send_chat_action(chat_id=update.message.chat_id, action=ChatAction.TYPING)
-    pr_day = PRday(get_prweb().timecard())
-    day = pr_day.days[0]
+    day = get_today()
     msg = "Today  {}\n".format(day.date().date())
     msg += "Uptime {}\n".format(day.uptime())
     bot_print(bot, update, msg)
@@ -103,8 +120,7 @@ def time(bot, update):
 def stamp(bot, update):
     """bot command for time stamps"""
     bot.send_chat_action(chat_id=update.message.chat_id, action=ChatAction.TYPING)
-    pr_day = PRday(get_prweb().timecard())
-    day = pr_day.days[0]
+    day = get_today()
     msg = "Today  {}\n".format(day.date().date())
     msg += "Stamps {}\n".format(
         ", ".join([i.time().strftime("%H:%M") for i in day.logs()])
